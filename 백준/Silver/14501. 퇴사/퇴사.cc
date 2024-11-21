@@ -10,8 +10,8 @@ using namespace std;
 const int INF = 0x3f3f3f3f;
 
 int n, t, p;
-pair<int, int> a[1004]; // {t: 기간, p: 금액}
-int ans[1004];
+pair<int, int> a[17]; // {t: 기간, p: 금액}
+int ans[17];
 
 int main() {
     ios::sync_with_stdio(0); cin.tie(0);
