@@ -7,24 +7,28 @@
 #include <stack>
 #include <set>
 #include <map>
+#include <unordered_map>
 using namespace std;
 
 int t, f;
 string a, b;
-map <string, int> num; // 자식 개수
-map <string, string> mp; // 부모
+int num[200004]; // 자식 개수
+int p[200004]; // 부모
 
-string find(string x) {
-    if (mp[x] == x) return x;
-    return mp[x] = find(mp[x]);
+int find(int x) {
+    if (p[x] < 0) return x;
+    return p[x] = find(p[x]);
 }
 
-bool merge(string u, string v) {
+bool merge(int u, int v) {
     u = find(u);
     v = find(v);
     if (u == v) return false;
-    mp[v] = u;
+    if (p[v] < p[u]) swap(v, u);
+    else if (p[v] == p[u]) p[u]--;
+    p[v] = u;
     num[u] += num[v];
+    // num[v] = 1;
     return true;
 }
 
@@ -35,20 +39,22 @@ int main() {
     while (t--) {
         cin >> f;
 
-        num.clear();
-        mp.clear();
+        unordered_map<string, int> um; // {name, idx}
+        int cnt = 1;
+        for (int i = 0; i < f * 2; i++) {
+            p[i] = -1;
+            num[i] = 1;
+        }
         for (int i = 0; i < f; i++) {
             cin >> a >> b;
-            if (mp.count(a) == 0) {
-                mp.insert({ a,a });
-                num.insert({ a,1 }); // 자식 개수 저장
+            if (um.find(a) == um.end()) { // a가 기존 맵에 없으면 추가
+                um[a] = cnt++;
             }
-            if (mp.count(b) == 0) {
-                mp.insert({ b,b });
-                num.insert({ b,1 });
+            if (um.find(b) == um.end()) { // b가 기존 맵에 없으면 추가
+                um[b] = cnt++;
             }
-            merge(a, b); // 연결되면 a, b 부모 같음
-            cout << num[find(a)] << "\n";
+            merge(um[a], um[b]); // name에 맞는 idx 매개변수 전달
+            cout << num[find(um[a])] << "\n";
         }
     }
 
